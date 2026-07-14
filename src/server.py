@@ -1,8 +1,11 @@
 import sqlite3 as sql
 from mcp.server.fastmcp import FastMCP
 from datetime import datetime
+import os
 
-con = sql.connect("tasklet.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tasklet.db")
+
+con = sql.connect(DB_PATH)
 try:
     cur = con.cursor()
     cur.execute("""
@@ -20,7 +23,6 @@ try:
 finally:
     con.close()
 
-# Initialize FastMCP server
 mcp = FastMCP()
 
 
@@ -28,16 +30,23 @@ mcp = FastMCP()
 def add_task(
     task: str, description: str = None, start: datetime = None, end: datetime = None
 ):
-    """Add a new task to the database."""
-    con = sql.connect("tasklet.db")
+    """Add a new task to the tasklet."""
+    con = sql.connect(DB_PATH)  # <-- fixed: use DB_PATH, not "tasklet.db"
     try:
         cur = con.cursor()
         cur.execute(
             """
             INSERT INTO tasks (task, description, start, end)
             VALUES (?, ?, ?, ?)
-        """,
-            (task, description, start, end),
+            """,
+            (
+                task,
+                description,
+                (
+                    start.isoformat() if start else None
+                ),  # datetime -> string fix from earlier
+                end.isoformat() if end else None,
+            ),
         )
         con.commit()
         return {"status": "success", "message": "Task added successfully."}
