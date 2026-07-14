@@ -61,8 +61,23 @@ def list_tasks():
         return {"status": "error", "message": str(e)}
     finally:
         con.close()
-
-
+        
+        
+@mcp.tool()
+def delete_task(task_id: int):
+    """Delete a task by id."""
+    con = sql.connect(DB_PATH)
+    try:
+        cur = con.cursor()
+        cur.execute("DELETE FROM tasks WHERE id = ?", [task_id])
+        con.commit()
+        if cur.rowcount == 0:
+            return {"status": "error", "message": f"No task with id {task_id}."}
+        return {"status": "success", "message": "Task deleted successfully."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    finally:
+        con.close()
 
 if __name__ == "__main__":
     mcp.run()
