@@ -31,7 +31,7 @@ def add_task(
     task: str, description: str = None, start: datetime = None, end: datetime = None
 ):
     """Add a new task to the tasklet."""
-    con = sql.connect(DB_PATH)  # <-- fixed: use DB_PATH, not "tasklet.db"
+    con = sql.connect(DB_PATH)
     try:
         cur = con.cursor()
         cur.execute(
@@ -55,6 +55,24 @@ def add_task(
     finally:
         con.close()
 
+@mcp.tool()
+def list_tasks():
+    """ Lists all the tasks present in database """
+    con = sql.connect(DB_PATH)
+    try:
+        cur = con.cursor()
+        res = cur.execute(
+            """
+            SELECT * FROM tasks
+            """
+        )
+        con.commit()
+        return {"status": "success", "message": res.fetchall()}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    finally:
+        con.close()
+    
 
 if __name__ == "__main__":
     mcp.run()
