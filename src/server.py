@@ -56,13 +56,16 @@ def list_tasks():
             SELECT * FROM tasks
             """)
         con.commit()
-        return {"status": "success", "message": res.fetchall()}
+        cols = ["id", "task", "description", "status", "createdtime", "enddate"]
+        rows = res.fetchall()
+        data = [dict(zip(cols, row)) for row in rows]
+        return {"status": "success", "message": data}
     except Exception as e:
         return {"status": "error", "message": str(e)}
     finally:
         con.close()
-        
-        
+
+
 @mcp.tool()
 def delete_task(task_id: int):
     """Delete a task by id."""
@@ -78,6 +81,7 @@ def delete_task(task_id: int):
         return {"status": "error", "message": str(e)}
     finally:
         con.close()
+
 
 if __name__ == "__main__":
     mcp.run()
