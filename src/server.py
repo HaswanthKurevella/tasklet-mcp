@@ -144,5 +144,17 @@ def delete_task(task_id: int):
         con.close()
 
 
+@mcp.prompt()
+def plan_my_day():
+    """Generate a prompt that builds a prioritzed and scheduled plan for the day based on the tasks in the database."""
+    return (
+        "call the list_tasks() tool to get all the tasks in the database. "
+        "Identify the tasks that are pending or active and have an end date of today or earlier. "
+        "Prioritize these tasks based on their end dates and any other relevant factors. "
+        "Create a schedule for the day that allocates time for each task, ensuring that higher "
+        "priority tasks are scheduled earlier in the day. Return the schedule in a clear and organized format."
+    )
+
+
 if __name__ == "__main__":
     mcp.run()
