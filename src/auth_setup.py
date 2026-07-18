@@ -3,9 +3,11 @@ from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 import os
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 SCOPES = ["https://www.googleapis.com/auth/tasks"]
-CLIENT_SECRET_FILE = "credentials/client_secret.json"
-TOKEN_FILE = "credentials/token.json"
+CLIENT_SECRET_FILE = os.path.join(BASE_DIR, "credentials", "client_secret.json")
+TOKEN_FILE = os.path.join(BASE_DIR, "credentials", "token.json")
 
 flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES)
 creds = flow.run_local_server(port=0)

@@ -36,14 +36,14 @@ def get_or_create_tasklist(service):
             if cached_id:
                 try:
                     service.tasklists().get(tasklist=cached_id).execute()
-                    return cached_id  # confirmed it still exists on Google's side
+                    return cached_id
                 except HttpError as e:
                     if e.resp.status == 404:
-                        pass  # stale — fall through and recreate
+                        pass
                     else:
                         raise
         except json.JSONDecodeError, KeyError:
-            pass  # file empty/corrupt — fall through and recreate
+            pass
 
     result = service.tasklists().insert(body={"title": "Tasklet"}).execute()
     list_id = result["id"]
